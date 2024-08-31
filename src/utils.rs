@@ -13,9 +13,30 @@ macro_rules! outputjson {
 
         #[cfg(target_os = "wasi")]
         {
-            // TODO: Determine how to output to fd3 in WASI
-            let output_str = serde_json::to_string($output)?;
-            println!("{}", output_str);
+            #[repr(C)]
+            struct Ciovec {
+                buf: *const u8,
+                buf_len: usize,
+            }
+
+            #[link(wasm_import_module = "wasi_snapshot_preview1")]
+            extern "C" {
+                fn fd_write(
+                    fd: u32,
+                    iovs: *const Ciovec,
+                    iovs_len: usize,
+                    nwritten: *mut usize,
+                ) -> u32;
+            }
+
+            let output_str = format!("{}\n", serde_json::to_string($output)?);
+            let iovec = Ciovec {
+                buf: output_str.as_ptr(),
+                buf_len: output_str.len(),
+            };
+            let mut nwritten = 0;
+
+            unsafe { fd_write(3, &iovec, 1, &mut nwritten) };
         }
 
         #[cfg(unix)]
