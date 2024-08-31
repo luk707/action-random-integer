@@ -11,7 +11,9 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: aarch64-apple-darwin
+          # `wasm32-wasi` will be deprecated on January 5th, 2025 in favor
+          # of `wasm32-wasip1`, however it is not yet supported by this action.
+          - target: wasm32-wasi
             archive: zip
     steps:
       - uses: actions/checkout@master
