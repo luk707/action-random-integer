@@ -9,7 +9,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target: [wasm32-wasip2, wasm32-wasip1]
+        include:
+          - target: aarch64-apple-darwin
+            archive: zip
     steps:
       - uses: actions/checkout@master
       - name: Compile and release
@@ -18,4 +20,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           RUSTTARGET: ${{ matrix.target }}
-          EXTRA_FILES: "README.md LICENSE"
+          ARCHIVE_TYPES: ${{ matrix.archive }}
