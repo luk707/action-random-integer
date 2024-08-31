@@ -6,12 +6,12 @@ use serde_json::{Map, Value};
 #[macro_export]
 macro_rules! outputjson {
     ($output:expr) => {
-        #[cfg(not(any(all(target_os = "wasi", target_env = "p2"), unix)))]
+        #[cfg(not(any(target_os = "wasi", unix)))]
         {
             compile_error!("outputjson macro is not supported on this platform");
         }
 
-        #[cfg(all(target_os = "wasi", target_env = "p2"))]
+        #[cfg(target_os = "wasi")]
         {
             // TODO: Determine how to output to fd3 in WASI
             let output_str = serde_json::to_string($output)?;

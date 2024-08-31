@@ -12,7 +12,7 @@ jobs:
 
     steps:
       - name: Toolchain
-        run: rustup target add wasm32-wasip2
+        run: rustup target add wasm32-wasip1
       - uses: actions/checkout@v4
       - name: Build
         run: cargo build --verbose
